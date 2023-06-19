@@ -3,6 +3,7 @@ import { showList } from './components/ls.js';
 import { goUP } from './components/up.js';
 import { goToDir } from './components/changeDir.js';
 import { userHomeDir } from './components/vars.js';
+import { currentDirNotification } from './components/notification.js';
 
 init();
 
@@ -19,33 +20,38 @@ function init() {
 
 function processData() {
   stdin.on('data', (chunk) => {
-    if (chunk.toString().trim().toLowerCase() === 'up') {
+    let command = chunk.toString().trim().toLowerCase();
+    if (command === 'up') {
       try {
         goUP();
         currentDirNotification();
       } catch (error) {
         console.error(`Operation failed
       \nEnter right command/path:\n`);
-        console.log(error);
         processData();
       }
-    } else if (chunk.toString().trim().toLowerCase().split(' ')[0] === 'cd') {
+    } else if (command.split(' ')[0] === 'cd') {
       try {
-        goToDir(chunk.toString().trim().toLowerCase().split(' ')[1]);
+        goToDir(command.split(' ')[1]);
         currentDirNotification();
       } catch (error) {
         console.error(`Operation failed
       \nEnter right command/path:\n`);
-        console.log(error);
+        processData();
+      }
+    } else if (command.split(' ')[0] === 'ls') {
+      try {
+        showList();
+        currentDirNotification();
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
         processData();
       }
     }
   });
 }
 
-function currentDirNotification() {
-  stdout.write(`\nYou are currently in ${process.cwd()} directory\n`);
-}
 //exit
 process.on('SIGINT', () => {
   process.exit();
