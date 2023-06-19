@@ -1,8 +1,9 @@
 const { stdin, stdout } = process;
-import { homedir } from 'os';
+import { showList } from './components/ls.js';
+import { goUP } from './components/up.js';
+import { goToDir } from './components/changeDir.js';
+import { userHomeDir } from './components/vars.js';
 
-const userHomeDir = homedir();
-let userCurrentDir = userHomeDir;
 init();
 
 function init() {
@@ -19,40 +20,29 @@ function init() {
 function processData() {
   stdin.on('data', (chunk) => {
     if (chunk.toString().trim().toLowerCase() === 'up') {
-      goUP();
+      try {
+        goUP();
+        currentDirNotification();
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
+        console.log(error);
+        processData();
+      }
     } else if (chunk.toString().trim().toLowerCase().split(' ')[0] === 'cd') {
-      goToDir(chunk.toString().trim().toLowerCase().split(' ')[1]);
+      try {
+        goToDir(chunk.toString().trim().toLowerCase().split(' ')[1]);
+        currentDirNotification();
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
+        console.log(error);
+        processData();
+      }
     }
   });
 }
 
-const goToDir = (dir) => {
-  try {
-    userCurrentDir = userHomeDir + '\\' + dir;
-    process.chdir(userCurrentDir);
-    currentDirNotification();
-  } catch (error) {
-    console.error(`Operation failed \nEnter right command/path:\n`);
-    processData();
-  }
-};
-
-const goUP = () => {
-  if (userCurrentDir === userHomeDir) {
-    currentDirNotification();
-    return;
-  } else {
-    userCurrentDir = userCurrentDir.slice(0, userCurrentDir.lastIndexOf('\\'));
-    try {
-      process.chdir(userCurrentDir);
-      currentDirNotification();
-    } catch (error) {
-      console.error(`Operation failedup
-      \nEnter right command/path:\n`);
-      processData();
-    }
-  }
-};
 function currentDirNotification() {
   stdout.write(`\nYou are currently in ${process.cwd()} directory\n`);
 }
