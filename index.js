@@ -1,28 +1,40 @@
 const { stdin, stdout } = process;
-import { log } from 'console';
 import { homedir } from 'os';
 
 const userHomeDir = homedir();
 let userCurrentDir = userHomeDir;
+init();
 
-const userName = process.argv[2].replace('--username=', '');
-stdout.write(`\nWelcome to the File Manager, ${userName}!\n`);
-currentDirNotification();
-stdout.write(
-  `\nTo move to another directory, please, use commands:\n-up\n-cd path_to_directory\n-ls\n`
-);
+function init() {
+  process.chdir(userHomeDir);
+  const userName = process.argv[2].replace('--username=', '');
+  stdout.write(`\nWelcome to the File Manager, ${userName}!\n`);
+  currentDirNotification();
+  stdout.write(
+    `\nTo move to another directory, please, use commands:\n-up\n-cd path_to_directory\n-ls\n`
+  );
+  processData();
+}
 
-stdin.on('data', (chunk) => {
-  if (chunk.toString().trim().toLowerCase() === 'up') {
-    goUP();
-  } else if (chunk.toString().trim().toLowerCase().split(' ')[0] === 'cd') {
-    goToDir(chunk.toString().trim().toLowerCase().split(' ')[1]);
-  }
-});
+function processData() {
+  stdin.on('data', (chunk) => {
+    if (chunk.toString().trim().toLowerCase() === 'up') {
+      goUP();
+    } else if (chunk.toString().trim().toLowerCase().split(' ')[0] === 'cd') {
+      goToDir(chunk.toString().trim().toLowerCase().split(' ')[1]);
+    }
+  });
+}
 
 const goToDir = (dir) => {
-  userCurrentDir = userCurrentDir + '\\' + dir + '\\';
-  currentDirNotification();
+  try {
+    userCurrentDir = userHomeDir + '\\' + dir;
+    process.chdir(userCurrentDir);
+    currentDirNotification();
+  } catch (error) {
+    console.error(`Operation failed \nEnter right command/path:\n`);
+    processData();
+  }
 };
 
 const goUP = () => {
@@ -30,12 +42,19 @@ const goUP = () => {
     currentDirNotification();
     return;
   } else {
-    userCurrentDir = userCurrentDir.slice(0, userCurrentDir.lastIndexOf('//'));
-    currentDirNotification();
+    userCurrentDir = userCurrentDir.slice(0, userCurrentDir.lastIndexOf('\\'));
+    try {
+      process.chdir(userCurrentDir);
+      currentDirNotification();
+    } catch (error) {
+      console.error(`Operation failedup
+      \nEnter right command/path:\n`);
+      processData();
+    }
   }
 };
 function currentDirNotification() {
-  stdout.write(`\nYou are currently in ${userCurrentDir}\n`);
+  stdout.write(`\nYou are currently in ${process.cwd()} directory\n`);
 }
 //exit
 process.on('SIGINT', () => {
