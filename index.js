@@ -2,7 +2,7 @@ const { stdin, stdout } = process;
 import { showList } from './components/ls.js';
 import { goUP } from './components/up.js';
 import { goToDir } from './components/changeDir.js';
-import { userHomeDir } from './components/vars.js';
+import { getUserCurrentDir, userHomeDir } from './components/vars.js';
 import { currentDirNotification } from './components/notification.js';
 
 init();
@@ -18,8 +18,8 @@ function init() {
   processData();
 }
 
-function processData() {
-  stdin.on('data', (chunk) => {
+async function processData() {
+  stdin.on('data', async (chunk) => {
     let command = chunk.toString().trim().toLowerCase();
     if (command === 'up') {
       try {
@@ -40,13 +40,15 @@ function processData() {
         processData();
       }
     } else if (command.split(' ')[0] === 'ls') {
+      const list = await showList();
       try {
-        showList();
-        currentDirNotification();
-      } catch (error) {
-        console.error(`Operation failed
+        console.table(list);
+      } catch {
+        (error) => {
+          console.error(`Operation failed
       \nEnter right command/path:\n`);
-        processData();
+          processData();
+        };
       }
     }
   });
