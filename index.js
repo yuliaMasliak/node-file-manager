@@ -2,8 +2,9 @@ const { stdin, stdout } = process;
 import { showList } from './components/ls.js';
 import { goUP } from './components/up.js';
 import { goToDir } from './components/changeDir.js';
-import { getUserCurrentDir, userHomeDir } from './components/vars.js';
+import { userHomeDir } from './components/vars.js';
 import { currentDirNotification } from './components/notification.js';
+import { readFile } from './components/readFile.js';
 
 init();
 
@@ -49,6 +50,14 @@ async function processData() {
       \nEnter right command/path:\n`);
           processData();
         };
+      }
+    } else if (command.split(' ')[0] === 'cat') {
+      try {
+        readFile(command.split(' ')[1]);
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
+        processData();
       }
     }
   });
