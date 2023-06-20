@@ -1,6 +1,6 @@
 import { processData } from './processData.js';
 
-function handleError() {
+export function handleError() {
   console.error(`Operation failed
   \nEnter right command/path:\n`);
   processData();

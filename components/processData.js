@@ -1,4 +1,4 @@
-const { stdin } = process;
+const { stdin, stdout } = process;
 import { showList } from './ls.js';
 import { goUP } from './up.js';
 import { goToDir } from './changeDir.js';
@@ -12,6 +12,7 @@ import { removeFile } from './removeFile.js';
 import { getOsData } from './os.js';
 import { calculateHash } from './hash.js';
 import { compressFile } from './compress.js';
+import { decompressFile } from './decopmress.js';
 
 export async function processData() {
   stdin.on('data', async (chunk) => {
@@ -93,6 +94,14 @@ export async function processData() {
         console.log(error);
         handleError();
       }
+    } else if (command.split(' ')[0] === 'decompress') {
+      try {
+        decompressFile(command.split(' ')[1], command.split(' ')[2]);
+      } catch (error) {
+        handleError();
+      }
+    } else {
+      stdout.write('Wrong command\n');
     }
   });
 }

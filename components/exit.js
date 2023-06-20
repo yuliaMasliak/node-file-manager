@@ -1,4 +1,5 @@
 const { stderr, stdout, stdin } = process;
+import { processData } from './processData.js';
 import { userHomeDir, setUserName, getUserName } from './vars.js';
 
 export function exit() {
