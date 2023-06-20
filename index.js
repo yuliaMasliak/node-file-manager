@@ -5,7 +5,8 @@ import { goToDir } from './components/changeDir.js';
 import { userHomeDir } from './components/vars.js';
 import { currentDirNotification } from './components/notification.js';
 import { readFile } from './components/readFile.js';
-
+import { createFile } from './components/addFie.js';
+import { renameFile } from './components/renameFile.js';
 init();
 
 function init() {
@@ -54,6 +55,22 @@ async function processData() {
     } else if (command.split(' ')[0] === 'cat') {
       try {
         readFile(command.split(' ')[1]);
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
+        processData();
+      }
+    } else if (command.split(' ')[0] === 'add') {
+      try {
+        createFile(command.split(' ')[1]);
+      } catch (error) {
+        console.error(`Operation failed
+      \nEnter right command/path:\n`);
+        processData();
+      }
+    } else if (command.split(' ')[0] === 'rn') {
+      try {
+        renameFile(command.split(' ')[1], command.split(' ')[2]);
       } catch (error) {
         console.error(`Operation failed
       \nEnter right command/path:\n`);
