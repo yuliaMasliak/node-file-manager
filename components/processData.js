@@ -9,6 +9,7 @@ import { renameFile } from './renameFile.js';
 import { copyFile } from './copyFile.js';
 import { moveFile } from './moveFile.js';
 import { removeFile } from './removeFile.js';
+import { getOsData } from './os.js';
 
 export async function processData() {
   stdin.on('data', async (chunk) => {
@@ -68,6 +69,12 @@ export async function processData() {
     } else if (command.split(' ')[0] === 'rm') {
       try {
         removeFile(command.split(' ')[1]);
+      } catch (error) {
+        handleError();
+      }
+    } else if (command.split(' ')[0] === 'os') {
+      try {
+        getOsData(command.split(' ')[1]);
       } catch (error) {
         handleError();
       }
