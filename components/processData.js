@@ -11,6 +11,7 @@ import { moveFile } from './moveFile.js';
 import { removeFile } from './removeFile.js';
 import { getOsData } from './os.js';
 import { calculateHash } from './hash.js';
+import { compressFile } from './compress.js';
 
 export async function processData() {
   stdin.on('data', async (chunk) => {
@@ -83,6 +84,13 @@ export async function processData() {
       try {
         calculateHash(command.split(' ')[1]);
       } catch (error) {
+        handleError();
+      }
+    } else if (command.split(' ')[0] === 'compress') {
+      try {
+        compressFile(command.split(' ')[1], command.split(' ')[2]);
+      } catch (error) {
+        console.log(error);
         handleError();
       }
     }
