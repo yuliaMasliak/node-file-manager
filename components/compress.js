@@ -10,13 +10,29 @@ export function compressFile(fileName, destinationFolder) {
     path.resolve(parentFolder, destinationFolder, compressedFileName)
   );
   const compressedStream = zlib.createBrotliCompress();
-  readStream
-    .pipe(compressedStream)
-    .pipe(writeStream)
-    .on('finish', () => {
-      console.log('Filed successfully compressed');
-    })
-    .on('error', (err) => {
-      console.error(err.message);
-    });
+  compressedStream.on('data', (data) => {
+    writeStream.write(data);
+  });
+
+  compressedStream.on('end', () => {
+    writeStream.end();
+    console.log('File compressed successfully');
+  });
+
+  compressedStream.on('error', (error) => {
+    console.log('Error during compression:', error);
+  });
+
+  writeStream.on('error', (error) => {
+    console.log('Error during writing:', error);
+  });
+
+  readStream.on('error', (error) => {
+    console.log(
+      'Error during reading file, check the corerct path was provided:',
+      error
+    );
+  });
+
+  readStream.pipe(compressedStream);
 }

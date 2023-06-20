@@ -1,6 +1,5 @@
 const { stderr, stdout, stdin } = process;
-import { processData } from './processData.js';
-import { userHomeDir, setUserName, getUserName } from './vars.js';
+import { getUserName } from './vars.js';
 
 export function exit() {
   process.on('SIGINT', () => {
@@ -18,7 +17,7 @@ export function exit() {
         `\nThank you for using File Manager, ${getUserName()}, goodbye!\n`
       );
     } else {
-      stderr.write(`Smth went wrong, the error code is ${code}\n`);
+      stderr.write(`Something went wrong, the error code is ${code}\n`);
     }
   });
 }

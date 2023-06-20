@@ -17,14 +17,30 @@ export function decompressFile(fileName, destinationFolder) {
   }
 
   const decompressedStream = zlib.createBrotliDecompress();
-  try {
-    readStream
-      .pipe(decompressedStream)
-      .pipe(writeStream)
-      .on('finish', () => {
-        console.log('Filed successfully decompressed');
-      });
-  } catch (error) {
-    throw new Error('Error');
-  }
+
+  decompressedStream.on('data', (data) => {
+    writeStream.write(data);
+  });
+
+  decompressedStream.on('end', () => {
+    writeStream.end();
+    console.log('File decompressed successfully');
+  });
+
+  decompressedStream.on('error', (error) => {
+    console.log('Error during decompression:', error);
+  });
+
+  writeStream.on('error', (error) => {
+    console.log('Error during writing:', error);
+  });
+
+  readStream.on('error', (error) => {
+    console.log(
+      'Error during reading file, check the corerct path was provided:',
+      error
+    );
+  });
+
+  readStream.pipe(decompressedStream);
 }
