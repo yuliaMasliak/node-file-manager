@@ -1,15 +1,20 @@
-const { stderr, stdout } = process;
+const { stderr, stdout, stdin } = process;
 import { userHomeDir, setUserName, getUserName } from './vars.js';
 
 export function exit() {
   process.on('SIGINT', () => {
-    process.exit();
+    process.exit(0);
+  });
+  stdin.on('data', (data) => {
+    if (data.toString().slice(0, 5) === '.exit') {
+      process.exit(0);
+    }
   });
 
   process.on('exit', (code) => {
     if (code === 0) {
       stdout.write(
-        `Thank you for using File Manager, ${getUserName()}, goodbye!\n`
+        `\nThank you for using File Manager, ${getUserName()}, goodbye!\n`
       );
     } else {
       stderr.write(`Smth went wrong, the error code is ${code}\n`);

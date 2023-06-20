@@ -1,5 +1,5 @@
 import { exit } from './components/exit.js';
-import { startApp } from './components/welcome.js';
+import { startApp } from './components/startApp.js';
 
 init();
 
