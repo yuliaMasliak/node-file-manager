@@ -7,6 +7,7 @@ import { currentDirNotification } from './components/notification.js';
 import { readFile } from './components/readFile.js';
 import { createFile } from './components/addFie.js';
 import { renameFile } from './components/renameFile.js';
+import { copyFile } from './components/copyFile.js';
 init();
 
 function init() {
@@ -28,58 +29,57 @@ async function processData() {
         goUP();
         currentDirNotification();
       } catch (error) {
-        console.error(`Operation failed
-      \nEnter right command/path:\n`);
-        processData();
+        handleError();
       }
     } else if (command.split(' ')[0] === 'cd') {
       try {
         goToDir(command.split(' ')[1]);
         currentDirNotification();
       } catch (error) {
-        console.error(`Operation failed
-      \nEnter right command/path:\n`);
-        processData();
+        handleError();
       }
-    } else if (command.split(' ')[0] === 'ls') {
+    } else if (command === 'ls') {
       const list = await showList();
       try {
         console.table(list);
-      } catch {
-        (error) => {
-          console.error(`Operation failed
-      \nEnter right command/path:\n`);
-          processData();
-        };
+        currentDirNotification();
+      } catch (error) {
+        handleError();
       }
     } else if (command.split(' ')[0] === 'cat') {
       try {
         readFile(command.split(' ')[1]);
       } catch (error) {
-        console.error(`Operation failed
-      \nEnter right command/path:\n`);
-        processData();
+        handleError();
       }
     } else if (command.split(' ')[0] === 'add') {
       try {
         createFile(command.split(' ')[1]);
       } catch (error) {
-        console.error(`Operation failed
-      \nEnter right command/path:\n`);
-        processData();
+        handleError();
       }
     } else if (command.split(' ')[0] === 'rn') {
       try {
         renameFile(command.split(' ')[1], command.split(' ')[2]);
       } catch (error) {
-        console.error(`Operation failed
-      \nEnter right command/path:\n`);
-        processData();
+        handleError();
+      }
+    } else if (command.split(' ')[0] === 'cp') {
+      try {
+        copyFile(command.split(' ')[1], command.split(' ')[2]);
+      } catch (error) {
+        console.log(err);
+        handleError();
       }
     }
   });
 }
-
+// error handler
+function handleError() {
+  console.error(`Operation failed
+      \nEnter right command/path:\n`);
+  processData();
+}
 //exit
 process.on('SIGINT', () => {
   process.exit();
