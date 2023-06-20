@@ -7,6 +7,7 @@ import { readFile } from './readFile.js';
 import { createFile } from './addFie.js';
 import { renameFile } from './renameFile.js';
 import { copyFile } from './copyFile.js';
+import { moveFile } from './moveFile.js';
 
 export async function processData() {
   stdin.on('data', async (chunk) => {
@@ -54,6 +55,12 @@ export async function processData() {
     } else if (command.split(' ')[0] === 'cp') {
       try {
         copyFile(command.split(' ')[1], command.split(' ')[2]);
+      } catch (error) {
+        handleError();
+      }
+    } else if (command.split(' ')[0] === 'mv') {
+      try {
+        moveFile(command.split(' ')[1], command.split(' ')[2]);
       } catch (error) {
         handleError();
       }
