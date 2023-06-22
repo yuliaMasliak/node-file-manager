@@ -1,11 +1,10 @@
 import fs from 'fs';
-import path from 'path';
-import { userHomeDir } from './vars.js';
+import { handleError } from './errorHandler.js';
 
 export function removeFile(fileName) {
   fs.unlink(fileName, (err) => {
     if (err) {
-      console.log(err.message);
+      handleError();
     } else {
       console.log('File deleted successfully');
     }

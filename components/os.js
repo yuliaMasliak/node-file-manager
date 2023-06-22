@@ -1,4 +1,5 @@
 import os from 'os';
+import { handleError } from './errorHandler.js';
 const { stdout } = process;
 
 export function getOsData(command) {
@@ -27,6 +28,7 @@ export function getOsData(command) {
       stdout.write(os.arch() + '\n');
       break;
     default:
+      handleError();
       break;
   }
 }

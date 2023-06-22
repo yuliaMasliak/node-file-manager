@@ -1,16 +1,23 @@
 import fs from 'fs';
 import path from 'path';
 import { userHomeDir } from './vars.js';
+import { handleError } from './errorHandler.js';
+import { stdin } from 'process';
 
 export function copyFile(fileName, newDirectory) {
   const destinationFilePath = path.resolve(userHomeDir, newDirectory, fileName);
-  const destinationStream = fs.createWriteStream(destinationFilePath);
-  const currentStream = fs.createReadStream(fileName);
-  currentStream.on('data', (chunk) => {
-    destinationStream.write(chunk);
+
+  const writeStream = fs.createWriteStream(destinationFilePath);
+  const readStream = fs.createReadStream(fileName);
+
+  writeStream.on('error', () => {
+    handleError();
   });
-  currentStream.on('end', (err) => {
-    if (err) return;
-    console.log('File copied successfully!');
+  readStream.on('error', () => {
+    handleError();
+  });
+  readStream.pipe(writeStream);
+  writeStream.on('finish', () => {
+    console.log(`File copied successfully.`);
   });
 }

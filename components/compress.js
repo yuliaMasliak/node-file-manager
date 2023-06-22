@@ -1,6 +1,7 @@
 import zlib from 'zlib';
 import fs from 'fs';
 import path from 'path';
+import { handleError } from './errorHandler.js';
 
 export function compressFile(fileName, destinationFolder) {
   let parentFolder = process.cwd().slice(0, process.cwd().lastIndexOf('\\'));
@@ -20,18 +21,15 @@ export function compressFile(fileName, destinationFolder) {
   });
 
   compressedStream.on('error', (error) => {
-    console.log('Error during compression:', error);
+    handleError();
   });
 
   writeStream.on('error', (error) => {
-    console.log('Error during writing:', error);
+    handleError();
   });
 
   readStream.on('error', (error) => {
-    console.log(
-      'Error during reading file, check the corerct path was provided:',
-      error
-    );
+    handleError();
   });
 
   readStream.pipe(compressedStream);

@@ -6,7 +6,7 @@ import { userHomeDir, setUserName, getUserName } from './vars.js';
 export function startApp() {
   process.chdir(userHomeDir);
   setUserName(process.argv[2].replace('--username=', ''));
-  console.log(getUserName());
+
   stdout.write(`\nWelcome to the File Manager, ${getUserName()}!\n`);
   currentDirNotification();
   stdout.write(
