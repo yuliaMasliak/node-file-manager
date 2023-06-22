@@ -45,7 +45,9 @@ export async function processData() {
     } else if (command.split(' ')[0] === 'decompress') {
       decompressFile(command.split(' ')[1], command.split(' ')[2]);
     } else {
-      handleError();
+      if (command.split(' ')[0] !== '.exit') {
+        handleError();
+      }
     }
   });
 }
