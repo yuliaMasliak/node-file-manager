@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import { userHomeDir } from './vars.js';
 import { handleError } from './errorHandler.js';
-import { stdin } from 'process';
 
 export function copyFile(fileName, newDirectory) {
   const destinationFilePath = path.resolve(userHomeDir, newDirectory, fileName);
