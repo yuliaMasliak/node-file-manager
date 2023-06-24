@@ -8,7 +8,7 @@ export const goToDir = (dir) => {
   if (dir.toLowerCase().includes(userHomeDir.toLowerCase())) {
     dirPath = dir;
   } else {
-    dirPath = userHomeDir + '\\' + dir;
+    dirPath = getUserCurrentDir() + '\\' + dir;
   }
 
   try {
