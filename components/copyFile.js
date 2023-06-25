@@ -1,22 +1,40 @@
 import fs from 'fs';
 import path from 'path';
-import { userHomeDir } from './vars.js';
 import { handleError } from './errorHandler.js';
 
 export function copyFile(fileName, newDirectory) {
-  const destinationFilePath = path.resolve(userHomeDir, newDirectory, fileName);
+  const destinationFilePath = path.resolve(process.cwd(), fileName);
 
-  const writeStream = fs.createWriteStream(destinationFilePath);
+  let writeStream;
+
   const readStream = fs.createReadStream(fileName);
-
-  writeStream.on('error', () => {
-    handleError();
-  });
   readStream.on('error', () => {
     handleError();
   });
-  readStream.pipe(writeStream);
-  writeStream.on('finish', () => {
-    console.log(`File copied successfully.`);
+  fs.readFile(destinationFilePath, (err, data) => {
+    if (!err && data) {
+      const index = fileName.split('').lastIndexOf('.');
+      const copyFileName = fileName.split('');
+      copyFileName.splice(index, 0, '-copy');
+      const copy = path.resolve(process.cwd(), copyFileName.join(''));
+      writeStream = fs.createWriteStream(copy);
+
+      writeStream.on('error', () => {
+        handleError();
+      });
+      readStream.pipe(writeStream);
+      writeStream.on('finish', () => {
+        console.log(`File copied successfully.`);
+      });
+    } else {
+      writeStream = fs.createWriteStream(destinationFilePath);
+      writeStream.on('error', () => {
+        handleError();
+      });
+      readStream.pipe(writeStream);
+      writeStream.on('finish', () => {
+        console.log(`File copied successfully.`);
+      });
+    }
   });
 }
