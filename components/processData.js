@@ -52,15 +52,34 @@ export async function processData() {
         command[command.length - 1] === "'"
       ) {
         let arr = command.split("'");
-        console.log(arr);
         copyFile(arr[0].slice(3, arr[0].length - 1), "'" + arr[1] + "'");
       } else {
         copyFile(command.split(' ')[1], command.split(' ')[2]);
       }
     } else if (command.split(' ')[0] === 'mv') {
-      moveFile(command.split(' ')[1], command.split(' ')[2]);
+      if (
+        (command[3] === '"' || command[3] === "'") &&
+        (command[command.length - 1] === '"' ||
+          command[command.length - 1] === "'")
+      ) {
+        let arr = command.split("'");
+
+        moveFile(arr[1], arr[3]);
+      } else if (command[3] === '"' || command[3] === "'") {
+        let arr = command.split("'");
+
+        moveFile(arr[1], arr[2].slice(1));
+      } else if (
+        command[command.length - 1] === '"' ||
+        command[command.length - 1] === "'"
+      ) {
+        let arr = command.split("'");
+        moveFile(arr[0].slice(3, arr[0].length - 1), "'" + arr[1] + "'");
+      } else {
+        moveFile(command.split(' ')[1], command.split(' ')[2]);
+      }
     } else if (command.split(' ')[0] === 'rm') {
-      removeFile(command.split(' ')[1]);
+      removeFile(command.slice(3));
     } else if (command.split(' ')[0] === 'os') {
       getOsData(command.split(' ')[1]);
     } else if (command.split(' ')[0] === 'hash') {
