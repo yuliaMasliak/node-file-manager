@@ -1,23 +1,31 @@
 import fs from 'fs';
 import path from 'path';
 import { handleError } from './errorHandler.js';
+import { handlePath, handleArgv } from './helpers.js';
 
-export function copyFile(fileName, newDirectory) {
-  const destinationFilePath = path.resolve(process.cwd(), fileName);
+export function copyFile(pathToFile = '', newDirectory = '') {
+  if (pathToFile.length < 1 || newDirectory.length < 1) {
+    handleError();
+  }
+  const processedBaseFileName = handleArgv(pathToFile);
+  const processedBaseFilePath = handlePath(processedBaseFileName);
+
+  const processedNewDirectoryName = handleArgv(newDirectory);
+  const processedNewDirectoryPath = handlePath(processedNewDirectoryName);
 
   let writeStream;
 
-  const readStream = fs.createReadStream(fileName);
+  const readStream = fs.createReadStream(processedBaseFilePath);
   readStream.on('error', () => {
     handleError();
   });
-  fs.readFile(destinationFilePath, (err, data) => {
+
+  fs.readFile(processedNewDirectoryPath, (err, data) => {
     if (!err && data) {
-      const index = fileName.split('').lastIndexOf('.');
-      const copyFileName = fileName.split('');
+      const index = processedBaseFilePath.split('').lastIndexOf('.');
+      const copyFileName = processedBaseFilePath.split('');
       copyFileName.splice(index, 0, '-copy');
-      const copy = path.resolve(process.cwd(), copyFileName.join(''));
-      writeStream = fs.createWriteStream(copy);
+      writeStream = fs.createWriteStream(copyFileName.join(''));
 
       writeStream.on('error', () => {
         handleError();
@@ -27,7 +35,12 @@ export function copyFile(fileName, newDirectory) {
         console.log(`File copied successfully.`);
       });
     } else {
-      writeStream = fs.createWriteStream(destinationFilePath);
+      const newPath = path.join(
+        processedNewDirectoryPath,
+        processedBaseFilePath.slice(processedBaseFilePath.lastIndexOf('\\'))
+      );
+
+      writeStream = fs.createWriteStream(newPath);
       writeStream.on('error', () => {
         handleError();
       });
